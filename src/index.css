@@ -1,0 +1,35 @@
+@import './styles/variables.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional custom styles that can't be handled by Tailwind */
+@layer components {
+  .lead-status {
+    @apply py-1 px-2 rounded-full text-xs font-medium text-center inline-block min-w-[80px];
+  }
+  
+  .status-new {
+    @apply bg-blue-100 text-blue-500;
+  }
+  
+  .status-contacted {
+    @apply bg-purple-100 text-purple-500;
+  }
+  
+  .status-qualified {
+    @apply bg-yellow-100 text-yellow-600;
+  }
+  
+  .status-proposal {
+    @apply bg-orange-100 text-orange-500;
+  }
+  
+  .status-converted {
+    @apply bg-green-100 text-green-500;
+  }
+  
+  .status-lost {
+    @apply bg-red-100 text-red-500;
+  }
+}
