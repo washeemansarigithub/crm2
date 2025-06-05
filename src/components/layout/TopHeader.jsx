@@ -32,25 +32,25 @@ const TopHeader = ({ toggleSidebar, currentDateTime = "2025-06-04 12:58:26", cur
           <i className="fas fa-bars text-xl"></i>
         </button>
         
-        <div className="relative flex-1">
+        <div className="relative flex-1 ml-5">
           <div className="flex items-center bg-gray-100 rounded-md overflow-hidden">
-            <div className="pl-3 pr-2">
+            <div className="pl-6 pr-2">
               <i className="fas fa-search text-gray-400"></i>
             </div>
             <input 
               type="text" 
               placeholder="Search..." 
-              className="bg-transparent outline-none border-none py-2 px-1 w-full"
+              className="bg-transparent outline-none border-none py-2 px-3 w-full"
             />
           </div>
         </div>
       </div>
 
       {/* Middle section - DateTime and User */}
-      <div className="hidden md:flex items-center text-gray-700 space-x-4">
+      {/* <div className="hidden md:flex items-center text-gray-700 space-x-4">
         <span>{currentDateTime}</span>
         <span>{currentUser}</span>
-      </div>
+      </div> */}
 
       {/* Right section - Notifications and User Profile */}
       <div className="flex items-center gap-2 md:gap-3">
