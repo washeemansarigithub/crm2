@@ -52,7 +52,7 @@ const Layout = () => {
         <TopHeader 
           toggleSidebar={toggleSidebar} 
           currentDateTime="2025-06-04 12:58:26" 
-          currentUser="amit24ve" 
+          currentUser="alex" 
         />
         <main className="flex-1 overflow-auto p-4 md:p-6">
           <Outlet />

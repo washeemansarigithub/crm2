@@ -1,303 +1,473 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Chart from 'chart.js/auto';
+import DashboardTable from './DashboardTable';
 
 const Dashboard = () => {
-  // Use the specified date and login
-  const currentDateTime = '2025-06-04 13:10:55';
+  const [activeTab, setActiveTab] = useState('admin');
+  const currentDateTime = '2025-06-05 09:53:30';
   const currentUser = 'amit24ve';
+  // Add state to track whether to show all meetings
+  const [showAllMeetings, setShowAllMeetings] = useState(false);
 
-  // Sample data for dashboard widgets
-  const salesData = {
-    thisMonth: 145000,
-    lastMonth: 128500,
-    growth: 12.8
-  };
-  
-  const leadsData = {
-    new: 24,
-    contacted: 18,
-    qualified: 12,
-    proposal: 8,
-    converted: 6,
-    lost: 3
-  };
-  
-  const upcomingTasks = [
-    { id: 1, title: 'Follow up with Vikram Sharma', due: '2025-06-05', priority: 'High' },
-    { id: 2, title: 'Prepare proposal for Mehta Enterprises', due: '2025-06-06', priority: 'Medium' },
-    { id: 3, title: 'Schedule demo with Reliance Industries', due: '2025-06-07', priority: 'High' },
-    { id: 4, title: 'Update product catalog', due: '2025-06-08', priority: 'Low' }
+  useEffect(() => {
+    const ctx = document.getElementById('revenueChart');
+    if (ctx) {
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [
+            {
+              label: 'Revenue',
+              data: [35000, 42000, 38000, 53000, 48000, 61000],
+              borderColor: '#4361EE',
+              backgroundColor: 'rgba(67, 97, 238, 0.1)',
+              tension: 0.3,
+              fill: true,
+            },
+            {
+              label: 'Expenses',
+              data: [19000, 23000, 25000, 28000, 26000, 32000],
+              borderColor: '#F72585',
+              backgroundColor: 'rgba(247, 37, 133, 0.1)',
+              tension: 0.3,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        },
+      });
+
+      return () => chart.destroy();
+    }
+  }, []);
+
+  const statsData = [
+    {
+      title: 'Total Revenue',
+      value: '₹48,35,290',
+      trend: '+12%',
+      icon: 'rupee-sign',
+      trendDirection: 'positive',
+      note: 'vs last month',
+    },
+    {
+      title: 'New Leads',
+      value: '284',
+      trend: '+8%',
+      icon: 'user-plus',
+      trendDirection: 'positive',
+      note: 'vs last month',
+    },
+    {
+      title: 'Conversions',
+      value: '75',
+      trend: '-3%',
+      icon: 'handshake',
+      trendDirection: 'negative',
+      note: 'vs last month',
+    },
+    {
+      title: 'Open Tickets',
+      value: '32',
+      trend: '-15%',
+      icon: 'ticket-alt',
+      trendDirection: 'positive',
+      note: 'vs last month',
+    },
+  ];
+
+  // Today's meetings data matching the screenshot
+  const todayMeetings = [
+    {
+      time: '10:00 AM',
+      name: 'Amit Sharma',
+      location: 'Lucknow, Uttar Pradesh',
+      status: 'Confirmed',
+      bgColor: 'bg-blue-50',
+      timeColor: 'text-blue-600',
+      statusBg: 'bg-green-100',
+      statusText: 'text-green-800',
+      purpose: 'Product Demo',
+      duration: '45 min',
+      contact: '+91 9876543210',
+      notes: 'Prepare marketing materials'
+    },
+    {
+      time: '2:30 PM',
+      name: 'Priya Singh',
+      location: 'South Delhi, Delhi',
+      status: 'Pending',
+      bgColor: 'bg-yellow-50',
+      timeColor: 'text-yellow-600',
+      statusBg: 'bg-yellow-100',
+      statusText: 'text-yellow-800',
+      purpose: 'Initial Consultation',
+      duration: '60 min',
+      contact: '+91 9876543211',
+      notes: 'Prospect interested in enterprise plan'
+    },
+    {
+      time: '3:45 PM',
+      name: 'Sneha Patel',
+      location: 'Ahmedabad, Gujarat',
+      status: 'Confirmed',
+      bgColor: 'bg-green-50',
+      timeColor: 'text-green-600',
+      statusBg: 'bg-green-100',
+      statusText: 'text-green-800',
+      purpose: 'Contract Signing',
+      duration: '30 min',
+      contact: '+91 9876543212',
+      notes: 'Bring final proposal documents'
+    }
   ];
   
-  const recentActivities = [
-    { id: 1, action: 'Added new lead', target: 'Vikram Sharma', time: '2 hours ago', icon: 'user-plus', color: 'blue' },
-    { id: 2, action: 'Updated proposal for', target: 'Priya Patel', time: '4 hours ago', icon: 'file-edit', color: 'purple' },
-    { id: 3, action: 'Converted lead', target: 'Sanjay Gupta', time: '1 day ago', icon: 'check-circle', color: 'green' },
-    { id: 4, action: 'Scheduled follow-up with', target: 'Rajesh Kumar', time: '1 day ago', icon: 'calendar', color: 'orange' }
+  // Extended meetings list for the full table view
+  const allMeetings = [
+    ...todayMeetings,
+    {
+      time: '5:15 PM',
+      name: 'Rajesh Kumar',
+      location: 'Mumbai, Maharashtra',
+      status: 'Confirmed',
+      bgColor: 'bg-blue-50',
+      timeColor: 'text-blue-600',
+      statusBg: 'bg-green-100',
+      statusText: 'text-green-800',
+      purpose: 'Follow-up Discussion',
+      duration: '45 min',
+      contact: '+91 9876543213',
+      notes: 'Discuss implementation timeline'
+    },
+    {
+      time: '6:00 PM',
+      name: 'Anita Desai',
+      location: 'Pune, Maharashtra',
+      status: 'Canceled',
+      bgColor: 'bg-red-50',
+      timeColor: 'text-red-600',
+      statusBg: 'bg-red-100',
+      statusText: 'text-red-800',
+      purpose: 'Project Review',
+      duration: '60 min',
+      contact: '+91 9876543214',
+      notes: 'Client asked to reschedule'
+    },
+    {
+      time: 'Tomorrow 9:30 AM',
+      name: 'Vikram Reddy',
+      location: 'Hyderabad, Telangana',
+      status: 'Scheduled',
+      bgColor: 'bg-purple-50',
+      timeColor: 'text-purple-600',
+      statusBg: 'bg-purple-100',
+      statusText: 'text-purple-800',
+      purpose: 'Product Training',
+      duration: '90 min',
+      contact: '+91 9876543215',
+      notes: 'Team of 5 attendees'
+    }
   ];
-  
-  // Lead status colors
-  const statusColors = {
-    new: 'bg-blue-100 text-blue-600 border-blue-200',
-    contacted: 'bg-purple-100 text-purple-600 border-purple-200',
-    qualified: 'bg-yellow-100 text-yellow-600 border-yellow-200',
-    proposal: 'bg-orange-100 text-orange-600 border-orange-200',
-    converted: 'bg-green-100 text-green-600 border-green-200',
-    lost: 'bg-red-100 text-red-600 border-red-200'
+
+  const pendingApprovals = [
+    {
+      title: 'Franchise Application',
+      description: 'Ahmedabad, Gujarat - Submitted by Suresh Patel',
+    },
+    {
+      title: 'Discount Request',
+      description: '12% on Bulk Order - Requested by Amit Sharma',
+    },
+    {
+      title: 'Leave Application',
+      description: 'June 10-15, 2025 - Neha Gupta',
+    },
+  ];
+
+  const activityLogs = [
+    {
+      actor: 'Rajesh Kumar',
+      action: 'approved franchise application for',
+      target: 'Chennai South',
+      time: '10 minutes ago',
+      icon: 'user-check',
+    },
+    {
+      actor: 'Priya Singh',
+      action: 'generated invoice',
+      target: '#INV-2025-0683',
+      time: '45 minutes ago',
+      icon: 'file-invoice',
+    },
+    {
+      actor: 'Amit Sharma',
+      action: 'added comment to lead',
+      target: '#L-2025-1542',
+      time: '1 hour ago',
+      icon: 'comment-alt',
+    },
+    {
+      actor: 'Sanjay Patel',
+      action: 'completed task',
+      target: 'Inventory Audit',
+      time: '3 hours ago',
+      icon: 'tasks',
+    },
+  ];
+
+  // Function to toggle between preview and full meetings view
+  const toggleMeetingsView = () => {
+    setShowAllMeetings(!showAllMeetings);
   };
 
-  // Chart colors for bars
-  const chartColors = {
-    new: 'bg-blue-500',
-    contacted: 'bg-purple-500',
-    qualified: 'bg-yellow-500',
-    proposal: 'bg-orange-500',
-    converted: 'bg-green-500',
-    lost: 'bg-red-500'
-  };
-  
   return (
-    <div className="p-1 md:p-2">
-      {/* Dashboard Header with Responsive Layout */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <div className="mt-2 sm:mt-0 text-sm text-gray-600">
-          <div className="flex items-center">
-            <i className="far fa-calendar-alt mr-2"></i>
-            <span>{currentDateTime}</span>
-          </div>
-          <div className="flex items-center mt-1 justify-end">
-            <i className="far fa-user mr-2"></i>
-            <span>Logged in as: {currentUser}</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Stats Cards - Enhanced with Better Visual Hierarchy */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {/* Total Sales */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all hover:shadow-md">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Total Sales</h3>
-          <p className="text-2xl font-bold text-gray-800">₹{salesData.thisMonth.toLocaleString()}</p>
-          <div className="flex items-center mt-2">
-            <span className="flex items-center text-green-600 font-medium">
-              <i className="fas fa-arrow-up mr-1 text-xs"></i>
-              {salesData.growth}%
-            </span>
-            <span className="text-gray-500 text-sm ml-2">vs last month</span>
-          </div>
-        </div>
-        
-        {/* Total Leads */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all hover:shadow-md">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Total Leads</h3>
-          <p className="text-2xl font-bold text-gray-800">71</p>
-          <div className="flex items-center mt-2">
-            <span className="flex items-center text-green-600 font-medium">
-              <i className="fas fa-arrow-up mr-1 text-xs"></i>
-              8%
-            </span>
-            <span className="text-gray-500 text-sm ml-2">vs last month</span>
-          </div>
-        </div>
-        
-        {/* Conversion Rate */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all hover:shadow-md">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Conversion Rate</h3>
-          <p className="text-2xl font-bold text-gray-800">8%</p>
-          <div className="flex items-center mt-2">
-            <span className="flex items-center text-green-600 font-medium">
-              <i className="fas fa-arrow-up mr-1 text-xs"></i>
-              2%
-            </span>
-            <span className="text-gray-500 text-sm ml-2">vs last month</span>
-          </div>
-        </div>
-        
-        {/* Avg. Deal Size */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all hover:shadow-md">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Avg. Deal Size</h3>
-          <p className="text-2xl font-bold text-gray-800">₹24,167</p>
-          <div className="flex items-center mt-2">
-            <span className="flex items-center text-green-600 font-medium">
-              <i className="fas fa-arrow-up mr-1 text-xs"></i>
-              5%
-            </span>
-            <span className="text-gray-500 text-sm ml-2">vs last month</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Lead Status and Tasks - Improved Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Lead Status Overview - Enhanced Visualization */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 lg:col-span-2">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Lead Status Overview</h2>
-            <div className="flex space-x-2">
-              <button className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-2 rounded">Monthly</button>
-              <button className="text-xs bg-blue-50 text-blue-700 py-1 px-2 rounded">Weekly</button>
-            </div>
-          </div>
-          
-          {/* Status Cards with Better Visibility */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-6">
-            {Object.entries(leadsData).map(([status, count]) => (
-              <div key={status} className={`rounded-lg border p-3 text-center ${statusColors[status]}`}>
-                <p className="font-medium mb-1 text-sm">
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </p>
-                <p className="text-xl font-bold">{count}</p>
-              </div>
-            ))}
-          </div>
-          
-          {/* Improved Bar Chart Visualization */}
-          <div className="h-48 mt-6 flex items-end gap-3 px-2">
-            {Object.entries(leadsData).map(([status, count]) => {
-              const maxCount = Math.max(...Object.values(leadsData));
-              const height = Math.max((count / maxCount) * 100, 10); // Minimum 10% height for visibility
-              
-              return (
-                <div key={status} className="flex flex-col items-center flex-1">
-                  <div className="relative w-full flex-1 flex flex-col justify-end">
-                    <div 
-                      className={`w-full ${chartColors[status]} rounded-t`}
-                      style={{ height: `${height}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mt-2 font-medium">
-                    {status.charAt(0).toUpperCase() + status.slice(1).substring(0, 3)}.
-                  </p>
-                  <p className="text-xs font-medium">{count}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        
-        {/* Upcoming Tasks - Enhanced Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Upcoming Tasks</h2>
-            <button className="text-blue-600 hover:text-blue-800 text-sm flex items-center">
-              View All
-              <i className="fas fa-chevron-right ml-1 text-xs"></i>
+    <div className="page-content p-4 text-[15px]">
+      {/* Role Tabs */}
+      <div className="bg-white p-4 rounded-lg shadow mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+        <div className="flex gap-2 flex-wrap">
+          {['admin', 'sales', 'franchise', 'support'].map((role) => (
+            <button
+              key={role}
+              onClick={() => setActiveTab(role)}
+              className={`px-4 py-1.5 text-sm rounded-md font-medium transition ${
+                activeTab === role
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {role.charAt(0).toUpperCase() + role.slice(1)}
             </button>
-          </div>
-          
-          <div className="space-y-3">
-            {upcomingTasks.map(task => (
-              <div key={task.id} className="border-b border-gray-100 pb-3 last:border-0">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-medium text-gray-800">{task.title}</h4>
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                    task.priority === 'High' ? 'bg-red-100 text-red-600' : 
-                    task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' : 
-                    'bg-green-100 text-green-600'
-                  }`}>{task.priority}</span>
-                </div>
-                <p className="text-sm text-gray-500 mt-1 flex items-center">
-                  <i className="far fa-calendar-alt mr-1.5"></i>
-                  Due: {task.due}
-                </p>
-              </div>
-            ))}
-          </div>
-          
-          <button className="w-full mt-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-md transition-colors">
-            + Add New Task
-          </button>
-        </div>
-      </div>
-      
-      {/* Recent Activities - Enhanced with Better Visual Cues */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Recent Activities</h2>
-          <div className="flex items-center">
-            <span className="hidden md:inline text-sm text-gray-500 mr-2">Filter:</span>
-            <select className="text-sm border border-gray-200 rounded px-2 py-1 bg-white">
-              <option>All Activities</option>
-              <option>Leads</option>
-              <option>Sales</option>
-              <option>Tasks</option>
-            </select>
-          </div>
-        </div>
-        
-        {/* Activity Timeline */}
-        <div className="space-y-4">
-          {recentActivities.map(activity => (
-            <div key={activity.id} className="flex">
-              <div className={`w-10 h-10 rounded-full bg-${activity.color}-100 flex items-center justify-center mr-4 flex-shrink-0`}>
-                <i className={`fas fa-${activity.icon} text-${activity.color}-600`}></i>
-              </div>
-              
-              <div className="flex-1 pb-4 border-b border-gray-100">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                  <p className="text-gray-800">
-                    <span>{activity.action}</span>{' '}
-                    <span className="font-medium">{activity.target}</span>
-                  </p>
-                  <span className="text-sm text-gray-500 mt-1 sm:mt-0">{activity.time}</span>
-                </div>
-                
-                <div className="flex mt-2 text-sm">
-                  <button className="text-blue-600 hover:text-blue-800 mr-4">
-                    <i className="far fa-comment mr-1"></i> Comment
-                  </button>
-                  <button className="text-gray-500 hover:text-gray-700">
-                    <i className="far fa-eye mr-1"></i> View Details
-                  </button>
-                </div>
-              </div>
-            </div>
           ))}
         </div>
-        
-        <button className="w-full mt-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors border border-blue-200">
-          Load More Activities
-        </button>
       </div>
 
-      {/* Extra Content for Larger Screens */}
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Performance Overview</h2>
-          <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            <p className="text-gray-500">Performance chart will be loaded here</p>
+      {/* Today's Schedule Section - Added as per screenshot */}
+      <div className="bg-white rounded-lg shadow mb-6">
+        <div className="p-5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+              <i className="far fa-calendar text-xl"></i>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">Today's Schedule</h2>
+              <p className="text-gray-600">You have {todayMeetings.length} meetings scheduled for today</p>
+            </div>
           </div>
+          <button 
+            onClick={toggleMeetingsView}
+            className="px-5 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
+          >
+            {showAllMeetings ? "Hide Details" : "View All Meetings"}
+          </button>
         </div>
-        
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">System Information</h2>
-          
-          <div className="space-y-3">
-            <div className="flex justify-between pb-2 border-b border-gray-100">
-              <span className="text-gray-600">Current Date/Time:</span>
-              <span className="font-medium text-gray-800">{currentDateTime}</span>
+
+        {/* Conditional rendering based on showAllMeetings state */}
+        {!showAllMeetings ? (
+          <div className="px-5 pb-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {todayMeetings.map((meeting, idx) => (
+              <div key={idx} className={`${meeting.bgColor} rounded-lg p-5`}>
+                <div className="flex justify-between items-start mb-3">
+                  <div className={`text-xl font-semibold ${meeting.timeColor}`}>
+                    {meeting.time}
+                  </div>
+                  <span className={`${meeting.statusBg} ${meeting.statusText} text-xs px-3 py-1 rounded-full font-medium`}>
+                    {meeting.status}
+                  </span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">{meeting.name}</h3>
+                <p className="text-gray-600">{meeting.location}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-5">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Time
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                      Purpose
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                      Duration
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                      Contact
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {allMeetings.map((meeting, idx) => (
+                    <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className={`px-4 py-3 whitespace-nowrap ${meeting.timeColor} font-medium`}>
+                        {meeting.time}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{meeting.name}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-sm text-gray-700">{meeting.location}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className={`px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full ${meeting.statusBg} ${meeting.statusText}`}>
+                          {meeting.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap hidden md:table-cell">
+                        <div className="text-sm text-gray-700">{meeting.purpose}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+                        <div className="text-sm text-gray-700">{meeting.duration}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+                        <div className="text-sm text-gray-700">{meeting.contact}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-right">
+                        <div className="flex justify-center gap-1">
+                          <button className="text-gray-600 hover:text-blue-600 bg-gray-100 hover:bg-blue-100 transition-colors p-1.5 rounded" title="View Details">
+                            <i className="fas fa-eye"></i>
+                          </button>
+                          <button className="text-gray-600 hover:text-green-600 bg-gray-100 hover:bg-green-100 transition-colors p-1.5 rounded" title="Edit Meeting">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="text-gray-600 hover:text-red-600 bg-gray-100 hover:bg-red-100 transition-colors p-1.5 rounded" title="Cancel Meeting">
+                            <i className="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="flex justify-between pb-2 border-b border-gray-100">
-              <span className="text-gray-600">Current User:</span>
-              <span className="font-medium text-gray-800">{currentUser}</span>
-            </div>
-            <div className="flex justify-between pb-2 border-b border-gray-100">
-              <span className="text-gray-600">Last Login:</span>
-              <span className="font-medium text-gray-800">2025-06-04 09:22:15</span>
-            </div>
-            <div className="flex justify-between pb-2 border-b border-gray-100">
-              <span className="text-gray-600">System Status:</span>
-              <span className="text-green-600 font-medium">Online</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Server Health:</span>
-              <div className="w-20 bg-gray-200 rounded-full h-2.5 mt-2">
-                <div className="bg-green-500 h-2.5 rounded-full" style={{width: '85%'}}></div>
+          </div>
+        )}
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {statsData.map((stat, idx) => (
+          <div key={idx} className="bg-white rounded-lg shadow p-4 hover:shadow-md transition">
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-sm font-medium text-gray-500">{stat.title}</h3>
+              <div className="w-8 h-8 bg-blue-100 text-blue-600 flex items-center justify-center rounded-full">
+                <i className={`fas fa-${stat.icon}`}></i>
               </div>
             </div>
+            <h2 className="text-xl font-bold text-gray-800">{stat.value}</h2>
+            <div className="text-sm mt-1 flex items-center">
+              <span
+                className={`flex items-center font-medium ${
+                  stat.trendDirection === 'positive' ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
+                <i
+                  className={`fas fa-arrow-${stat.trendDirection === 'positive' ? 'up' : 'down'} mr-1`}
+                ></i>
+                {stat.trend}
+              </span>
+              <span className="ml-2 text-xs text-gray-500">{stat.note}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div className="bg-white rounded-lg shadow mb-6">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h3 className="text-base font-semibold text-gray-800">Revenue Overview</h3>
+          <div className="flex gap-2">
+            <button className="text-gray-600 hover:text-black p-1.5 rounded hover:bg-gray-100">
+              <i className="fas fa-download"></i>
+            </button>
+            <button className="text-gray-600 hover:text-black p-1.5 rounded hover:bg-gray-100">
+              <i className="fas fa-ellipsis-v"></i>
+            </button>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="h-[320px]">
+            <canvas id="revenueChart"></canvas>
           </div>
         </div>
       </div>
+
+      {/* Approvals & Activity Logs */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Approvals */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="flex justify-between items-center p-4 border-b">
+            <h3 className="text-base font-semibold text-gray-800">Pending Approvals</h3>
+            <button className="text-sm text-blue-600 hover:underline">View All</button>
+          </div>
+          <ul className="divide-y text-sm">
+            {pendingApprovals.map((item, idx) => (
+              <li key={idx} className="p-4 hover:bg-gray-50">
+                <div className="flex flex-col sm:flex-row justify-between gap-3">
+                  <div>
+                    <h4 className="font-medium text-gray-800">{item.title}</h4>
+                    <p className="text-xs text-gray-600 mt-1">{item.description}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">Approve</button>
+                    <button className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700">Reject</button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Activity */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="flex justify-between items-center p-4 border-b">
+            <h3 className="text-base font-semibold text-gray-800">Activity Log</h3>
+            <button className="text-sm text-blue-600 hover:underline">View All</button>
+          </div>
+          <ul className="divide-y text-sm">
+            {activityLogs.map((log, idx) => (
+              <li key={idx} className="p-4 flex gap-3 hover:bg-gray-50">
+                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className={`fas fa-${log.icon}`}></i>
+                </div>
+                <div className="flex-1">
+                  <p>
+                    <span className="font-semibold">{log.actor}</span> {log.action}{' '}
+                    <span className="font-semibold">{log.target}</span>
+                  </p>
+                  <span className="text-xs text-gray-500">{log.time}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      {/* <DashboardTable /> */}
     </div>
   );
 };
